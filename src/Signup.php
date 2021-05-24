@@ -2,11 +2,11 @@
 namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\DSO\Noun;
-use Digraph\Modules\event_commencement\Signup as Event_commencementSignup;
+use Digraph\Modules\ous_event_management\Signup as Ous_event_managementSignup;
 use Digraph\Modules\ous_event_regalia\Regalia\RegaliaOrderChunk;
 use Digraph\Modules\ous_event_regalia\Regalia\RegaliaPlacedChunk as RegaliaRegaliaPlacedChunk;
 
-class Signup extends Event_commencementSignup
+class Signup extends Ous_event_managementSignup
 {
     public function regaliaOrder(RegaliaOrder $set = null): ?RegaliaOrder
     {
