@@ -1,9 +1,9 @@
 <?php
-namespace Digraph\Modules\event_regalia;
+namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\DSO\Noun;
-use Digraph\Modules\event_regalia\Regalia\DegreeInfoField;
-use Digraph\Modules\event_regalia\Regalia\RegaliaSizeField;
+use Digraph\Modules\ous_event_regalia\Regalia\DegreeInfoField;
+use Digraph\Modules\ous_event_regalia\Regalia\RegaliaSizeField;
 use Digraph\Modules\ous_event_management\Signup;
 use Formward\Fields\CheckboxList;
 

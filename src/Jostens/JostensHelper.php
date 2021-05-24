@@ -1,5 +1,5 @@
 <?php
-namespace Digraph\Modules\event_regalia\Jostens;
+namespace Digraph\Modules\ous_event_regalia\Jostens;
 
 use Box\Spout\Reader\Common\Creator\ReaderEntityFactory;
 use Digraph\Helpers\AbstractHelper;

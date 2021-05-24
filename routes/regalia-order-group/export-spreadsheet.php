@@ -3,7 +3,7 @@ use Box\Spout\Writer\Common\Creator\WriterEntityFactory;
 
 $package->cache_noStore();
 
-/** @var \Digraph\Modules\event_regalia\RegaliaOrderGroup */
+/** @var \Digraph\Modules\ous_event_regalia\RegaliaOrderGroup */
 $group = $package->noun();
 
 /** @var \Digraph\Media\MediaHelper */

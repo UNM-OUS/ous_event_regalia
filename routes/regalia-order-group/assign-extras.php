@@ -1,7 +1,7 @@
 <?php
 
-use Digraph\Modules\event_regalia\RegaliaOrder;
-use Digraph\Modules\event_regalia\Signup;
+use Digraph\Modules\ous_event_regalia\RegaliaOrder;
+use Digraph\Modules\ous_event_regalia\Signup;
 
 $package->cache_noStore();
 $group = $package->noun();
@@ -44,7 +44,7 @@ $needRegalia = array_filter(
 // }
 
 // list everyone who needs an extra
-/** @var \Digraph\Modules\event_regalia\RegaliaHelper */
+/** @var \Digraph\Modules\ous_event_regalia\RegaliaHelper */
 $regalia = $cms->helper('regalia');
 foreach ($needRegalia as $s) {
     echo "<h2>" . $s['dso.id'] . " " . $s->link() . "</h2>";

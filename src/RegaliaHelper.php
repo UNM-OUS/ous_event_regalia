@@ -1,6 +1,6 @@
 <?php
 
-namespace Digraph\Modules\event_regalia;
+namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\Helpers\AbstractHelper;
 use Digraph\Modules\ous_event_management\Signup;

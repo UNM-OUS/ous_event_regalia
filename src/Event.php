@@ -1,5 +1,5 @@
 <?php
-namespace Digraph\Modules\event_regalia;
+namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\Modules\ous_event_management\Event as Ous_event_managementEvent;
 

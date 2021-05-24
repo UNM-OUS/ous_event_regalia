@@ -2,9 +2,9 @@
 
 use Digraph\Forms\Fields\Noun;
 use Digraph\Forms\Form;
-use Digraph\Modules\event_regalia\RegaliaOrder;
-use Digraph\Modules\event_regalia\Signup;
-use Digraph\Modules\event_regalia\SignupWindow;
+use Digraph\Modules\ous_event_regalia\RegaliaOrder;
+use Digraph\Modules\ous_event_regalia\Signup;
+use Digraph\Modules\ous_event_regalia\SignupWindow;
 use Digraph\Modules\ous_event_management\Event;
 use Formward\Fields\CheckboxList;
 

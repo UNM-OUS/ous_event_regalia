@@ -1,10 +1,10 @@
 <?php
-namespace Digraph\Modules\event_regalia;
+namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\DSO\Noun;
 use Digraph\Modules\event_commencement\Signup as Event_commencementSignup;
-use Digraph\Modules\event_regalia\Regalia\RegaliaOrderChunk;
-use Digraph\Modules\event_regalia\Regalia\RegaliaPlacedChunk as RegaliaRegaliaPlacedChunk;
+use Digraph\Modules\ous_event_regalia\Regalia\RegaliaOrderChunk;
+use Digraph\Modules\ous_event_regalia\Regalia\RegaliaPlacedChunk as RegaliaRegaliaPlacedChunk;
 
 class Signup extends Event_commencementSignup
 {

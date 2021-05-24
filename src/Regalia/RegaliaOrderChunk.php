@@ -1,5 +1,5 @@
 <?php
-namespace Digraph\Modules\event_regalia\Regalia;
+namespace Digraph\Modules\ous_event_regalia\Regalia;
 
 use Digraph\Modules\ous_event_management\Chunks\AbstractChunk;
 
