@@ -1,0 +1,9 @@
+{
+    "name": "unmous/ous_event_regalia",
+    "type": "digraph-module",
+    "autoload": {
+        "psr-4": {
+            "Digraph\\Modules\\ous_event_regalia\\": "src/"
+        }
+    }
+}
