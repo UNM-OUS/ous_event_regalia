@@ -6,6 +6,7 @@ types:
     event: ${module.namespace}\Event
     event-signup: ${module.namespace}\Signup
     billing-index: ${module.namespace}\BillingIndex
+    regalia-prices: ${module.namespace}\RegaliaPrices
 
 permissions:
   url:
@@ -19,6 +20,9 @@ permissions:
     regalia-order-group/add-signups: [allow group editor]
     regalia-order-group/export-spreadsheet: [allow group editor, allow group bookstore]
     regalia-order-group/assign-extras: [allow group editor, allow group bookstore]
+    regalia-order-group/billing: [allow group editor, allow group bookstore]
+    regalia-prices/display: [deny all, allow group editor, allow group bookstore]
+    regalia-prices/edit: [allow group bookstore]
   add:
     '*/billing-index': [deny all]
     'billing-index/*': [deny all]
@@ -27,11 +31,13 @@ permissions:
     'regalia-order/*': [deny all]
     '*/regalia-order': [deny all]
     'regalia-order-group/regalia-order': [allow group editor]
+    'regalia-order-group/regalia-prices': [allow group editor]
 
 actions:
   proper:
     regalia-order-group:
       assign-extras: "!id/assign-extras"
+      billing: "!id/billing"
   common:
     _user/signedin:
       regalia: _regalia-management/display

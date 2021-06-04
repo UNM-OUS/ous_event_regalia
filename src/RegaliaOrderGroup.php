@@ -1,4 +1,5 @@
 <?php
+
 namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\DSO\Noun;
@@ -7,6 +8,103 @@ use Digraph\Modules\ous_event_management\SignupWindow;
 class RegaliaOrderGroup extends Noun
 {
     protected $allOrders;
+    protected $regaliaPrices = false;
+
+    /**
+     * Returns the regalia prices object to use for this order group, which will
+     * be either (in this order of priority):
+     *  * the newest direct child of this group
+     *  * the newest prices from before this group was created
+     *  * the oldest prices in the system
+     *
+     * @return RegaliaPrices|null
+     */
+    public function regaliaPrices(): ?RegaliaPrices
+    {
+        if ($this->regaliaPrices === false) {
+            if (!($this->regaliaPrices = $this->regaliaPricesChild())) {
+                // no child, find most recent before this cdate
+                $search = $this->cms()->factory()->search();
+                $search->where('${dso.type} = "regalia-prices" AND ${dso.date.created} < :time');
+                $search->order('${dso.date.created} desc');
+                $search->limit(1);
+                if ($result = $search->execute(['time' => $this['dso.created.date']])) {
+                    $this->regaliaPrices = reset($result);
+                } else {
+                    $search->where('${dso.type} = "regalia-prices"');
+                    $search->order('${dso.date.created} asc');
+                    if ($result = $search->execute(['time' => $this['dso.created.date']])) {
+                        $this->regaliaPrices = reset($result);
+                    } else {
+                        $this->regaliaPrices = null;
+                    }
+                }
+            }
+        }
+        return $this->regaliaPrices;
+    }
+
+    protected function regaliaPricesChild(): ?RegaliaPrices
+    {
+        $children = $this->cms()->helper('graph')->children($this['dso.id'], 'regalia-group-prices');
+        return $children ? end($children) : null;
+    }
+
+    public function prices(): array
+    {
+        if ($this->regaliaPrices()) {
+            return $this->regaliaPrices()['prices'];
+        }
+        $this->cms()->helper('notifications')->notice('No regalia-prices found for ' . $this->name(), 'no-regalia-prices-' . $this['dso.id']);
+        return [
+            'doctor' => [
+                'hood' => 0,
+                'gown' => 0,
+                'cap' => 0,
+                'tam' => 0,
+                'package c/g' => 0,
+                'package t/g' => 0
+            ],
+            'master' => [
+                'hood' => 0,
+                'gown' => 0,
+                'cap' => 0,
+                'tam' => 0,
+                'package c/g' => 0,
+                'package t/g' => 0
+            ],
+            'bachelor' => [
+                'hood' => 0,
+                'gown' => 0,
+                'cap' => 0,
+                'tam' => 0,
+                'package c/g' => 0,
+                'package t/g' => 0
+            ]
+        ];
+    }
+
+    public function orderPrice(RegaliaOrder $order): int
+    {
+        $level = preg_replace('/:.*$/', '', $order['degree.level']);
+        return array_sum(
+            array_map(
+                function ($item) use ($level) {
+                    return $this->orderItemPrice($item, $level);
+                },
+                $order->orders()
+            )
+        );
+    }
+
+    public function orderItemPrice(string $item, string $level): int
+    {
+        $level = strtolower($level);
+        $item = str_replace('&nbsp;', ' ', $item);
+        $item = strtolower($item);
+        $prices = $this->prices();
+        return @$prices[$level][$item] ?? 0;
+    }
 
     public function actions($links)
     {
@@ -21,7 +119,7 @@ class RegaliaOrderGroup extends Noun
     {
         if ($child instanceof SignupWindow) {
             return 'regalia-group-signupwindow';
-        }else {
+        } else {
             return null;
         }
     }

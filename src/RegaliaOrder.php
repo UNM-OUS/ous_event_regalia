@@ -1,4 +1,5 @@
 <?php
+
 namespace Digraph\Modules\ous_event_regalia;
 
 use Digraph\DSO\Noun;
@@ -10,6 +11,44 @@ use Formward\Fields\CheckboxList;
 class RegaliaOrder extends Noun
 {
     protected $jostens;
+
+    public function billing(): ?array
+    {
+        // explicitly-defined billing takes precedence
+        if (is_array($this['billing'])) {
+            return $this['billing'];
+        }
+        if ($this['bill_owner']) {
+            return null;
+        }
+        // automatic billing if there's a signup
+        if ($this->signup()) {
+            // variables to store billing found for primary/secondary events
+            $billing_primary = [];
+            $billing_secondary = [];
+            foreach ($this->signup()->allEvents() as $event) {
+                if ($event::PRIMARY_EVENT) {
+                    // if we find a primary event, convention is to bill only to that event
+                    $attended = $this->signup()->attended($event['dso.id']);
+                    if ($attended) {
+                        // assign to this primary event if they attended, OR if there is no attendance helper
+                        $billing_primary[$event['dso.id']] = 1;
+                    } elseif ($attended === null) {
+                        $this->cms()->helper('notifications')->warning(
+                            $this->orderGroup()->link() . ': No attendance information for ' . $event->link() . '/' . $this->signup()->link() . '. This order group\'s billing may change.',
+                            'no-attendance-' . $this['dso.id'] . '-' . $event['dso.id'] . '-' . $this->signup()['dso.id']
+                        );
+                    }
+                } else {
+                    // otherwise add event to billing
+                    $billing_secondary[$event['dso.id']] = 1;
+                }
+            }
+            return $billing_primary ? $billing_primary : $billing_secondary;
+        }
+        // no information, convention is to bill to site owner
+        return null;
+    }
 
     public function title($verb = null)
     {
