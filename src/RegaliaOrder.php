@@ -12,6 +12,38 @@ class RegaliaOrder extends Noun
 {
     protected $jostens;
 
+    public function number()
+    {
+        $id = str_split($this['dso.id']);
+        $ids = array_filter(
+            $this->orderGroup()->allOrderIDs(),
+            function ($e) {
+                return $e != $this['dso.id'];
+            }
+        );
+        $number = array_shift($id);
+        do {
+            $number .= array_shift($id);
+        } while ($this->number_unique($number, $ids));
+        return $number;
+    }
+
+    protected function number_unique(string $number, array $ids)
+    {
+        $strlen = strlen($number);
+        foreach ($ids as $id) {
+            if (substr($id, 0, $strlen)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public function name($verb = null)
+    {
+        return parent::name($verb) . ' [#' . $this->number() . ']';
+    }
+
     public function billing(): ?array
     {
         // explicitly-defined billing takes precedence
@@ -52,7 +84,7 @@ class RegaliaOrder extends Noun
 
     public function title($verb = null)
     {
-        $title = parent::title($verb);
+        $title = parent::name($verb);
         if ($this->signup()) {
             $title .= ' (' . $this->signup()['signup.for'] . ')';
         }

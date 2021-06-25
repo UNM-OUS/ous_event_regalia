@@ -18,7 +18,7 @@ class RegaliaHelper extends AbstractHelper
         $chevronColor = null;
         $order = null;
         if ($orderOrSignup instanceof RegaliaOrder) {
-            $title = 'Type/name: ' . $orderOrSignup->name();
+            $title = 'Regalia order: ' . $orderOrSignup->name();
             $hatType = $orderOrSignup->hatType();
             $data = $orderOrSignup->get();
             $bandColor = $orderOrSignup->bandColor();

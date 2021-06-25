@@ -7,7 +7,7 @@ use Digraph\Modules\ous_event_management\SignupWindow;
 
 class RegaliaOrderGroup extends Noun
 {
-    protected $allOrders;
+    protected $allOrders, $allOrderIDs;
     protected $regaliaPrices = false;
 
     /**
@@ -155,6 +155,18 @@ class RegaliaOrderGroup extends Noun
             );
         }
         return $this->allOrders;
+    }
+
+    public function allOrderIDs(): array
+    {
+        if ($this->allOrderIDs === null) {
+            $this->allOrderIDs = $this->cms()->helper('graph')->childIDs(
+                $this['dso.id'],
+                'regalia-group-order',
+                1
+            );
+        }
+        return $this->allOrderIDs;
     }
 
     public function parent()

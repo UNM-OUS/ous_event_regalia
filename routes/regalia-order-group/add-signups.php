@@ -37,7 +37,7 @@ $signups = array_filter(
     $signups,
     function (Signup $signup) {
         return $signup->complete()
-        && !$signup['regalia.order.optout']
+            && !$signup['regalia.order.optout']
             && $signup['regalia.order.parts'];
     }
 );
@@ -93,7 +93,7 @@ if ($form->handle()) {
                 'parts' => $signup['regalia.order.parts'],
                 'size' => $signup['regalia.size'],
                 'degree' => $signup['regalia.degree'],
-                'digraph.name' => 'signup',
+                'digraph.name' => 'order',
                 'extra' => false,
             ]);
             if ($order->insert()) {
