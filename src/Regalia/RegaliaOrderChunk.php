@@ -1,4 +1,5 @@
 <?php
+
 namespace Digraph\Modules\ous_event_regalia\Regalia;
 
 use Digraph\Modules\ous_event_management\Chunks\AbstractChunk;
@@ -16,13 +17,13 @@ class RegaliaOrderChunk extends AbstractChunk
             $search->where('${dso.type} = :type AND ${signup.for} = :for');
             $search->order('${dso.created.date} desc');
             $search->limit(1);
-            if ($result = $search->execute(['type' => $this->signup['dso.type'],'for'=>$this->signup['signup.for']])) {
+            if ($result = $search->execute(['type' => $this->signup['dso.type'], 'for' => $this->signup['signup.for']])) {
                 $result = array_pop($result);
                 $this->signup[$this->name] = $result[$this->name];
                 return;
             }
             // try to find user in user lists
-            if ($user = $this->userListUser()) {
+            if ($user = $this->signup->userListUser()) {
                 $this->signup[$this->name] = [
                     'degree' => [
                         'institution' => $user['degree_institution'],
