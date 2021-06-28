@@ -23,7 +23,7 @@ class RegaliaOrderChunk extends AbstractChunk
                 return;
             }
             // try to find user in user lists
-            if ($user = $this->signup->userListUser()) {
+            if ($user = $this->signup->firstUserListUser()) {
                 $this->signup[$this->name] = [
                     'degree' => [
                         'institution' => $user['degree_institution'],
