@@ -145,9 +145,9 @@ class RegaliaOrder extends Noun
         }
         if ($hat && $robe) {
             if ($this->hatType() == 'cap') {
-                $orders[] = 'PACKAGE&nbsp;C/G';
+                $orders[] = 'PACKAGE C/G';
             } else {
-                $orders[] = 'PACKAGE&nbsp;T/G';
+                $orders[] = 'PACKAGE T/G';
             }
         } else {
             if ($hat) {

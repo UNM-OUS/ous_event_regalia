@@ -20,6 +20,7 @@ permissions:
     regalia-order-group/add-signups: [allow group editor]
     regalia-order-group/export-spreadsheet: [allow group editor, allow group bookstore]
     regalia-order-group/assign-extras: [allow group editor, allow group bookstore]
+    regalia-order-group/assign-extras-chunk: [allow group editor, allow group bookstore]
     regalia-order-group/billing: [allow group editor, allow group bookstore]
     regalia-prices/display: [deny all, allow group editor, allow group bookstore]
     regalia-prices/edit: [allow group bookstore]

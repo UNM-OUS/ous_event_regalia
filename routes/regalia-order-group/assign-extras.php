@@ -6,6 +6,13 @@ use Digraph\Modules\ous_event_regalia\Signup;
 $package->cache_noStore();
 $group = $package->noun();
 
+// figure out windows
+$windows = $cms->helper('graph')->children($group['dso.id'], 'regalia-group-signupwindow');
+if (!$windows) {
+    $cms->helper('notifications')->printWarning('Create at least one edge from this order group to a signup window to use this tool for assigning extras to signups from that window.');
+    return;
+}
+
 // figure out who needs extras, initially limited to non-opted-out-regalia orders
 $s = $cms->factory()->search();
 $where = [
@@ -16,7 +23,7 @@ $where = [
 ];
 // limit to signups from child windows
 $validIDs = [];
-foreach ($cms->helper('graph')->children($group['dso.id'], 'regalia-group-signupwindow') as $window) {
+foreach ($windows as $window) {
     foreach ($cms->helper('graph')->childIDs($window['dso.id'], 'event-signupwindow-signup') as $id) {
         $validIDs[] = $id;
     }
@@ -34,19 +41,19 @@ $needRegalia = array_filter(
     }
 );
 
-// get all available extras
-// $extras = $group->extraOrders();
-// $extras = array_filter($extras, function (RegaliaOrder $order) {
-//     return !$order->signup();
-// });
-// foreach ($extras as $extra) {
-//     echo "<div>" . $extra->link() . "</div>";
-// }
-
 // list everyone who needs an extra
 /** @var \Digraph\Modules\ous_event_regalia\RegaliaHelper */
 $regalia = $cms->helper('regalia');
 foreach ($needRegalia as $s) {
-    echo "<h2>" . $s['dso.id'] . " " . $s->link() . "</h2>";
-    echo $regalia->orderDisplay($s);
+    echo "<iframe class='embedded-iframe' src='" . $group->url('assign-extras-chunk', ['s' => $s['dso.id']]) . "'></iframe>";
+}
+
+// list everyone who already has an extra assigned
+$extras = $group->extraOrders();
+$extras = array_filter($extras, function (RegaliaOrder $order) {
+    return $order->signup();
+});
+$options = [];
+foreach ($extras as $extra) {
+    echo "<iframe class='embedded-iframe' src='" . $group->url('assign-extras-chunk', ['s' => $extra->signup()['dso.id']]) . "'></iframe>";
 }

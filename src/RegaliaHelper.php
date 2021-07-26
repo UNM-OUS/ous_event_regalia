@@ -85,6 +85,48 @@ class RegaliaHelper extends AbstractHelper
         return $out;
     }
 
+    public function orderSizeString($orderOrSignup)
+    {
+        $cells = [];
+        $title = null;
+        $hatType = 'cap';
+        $order = null;
+        if ($orderOrSignup instanceof RegaliaOrder) {
+            $data = $orderOrSignup->get();
+            $order = implode('; ', $orderOrSignup->orders());
+        } elseif ($orderOrSignup instanceof Signup) {
+            $data = $orderOrSignup['regalia'];
+        } else {
+            $data = $orderOrSignup;
+        }
+        if (!is_array($data)) {
+            throw new \Exception("Invalid regalia order data, should be a RegaliaOrder, Signup, or array");
+        }
+        if ($title) {
+            $out .= '<strong>' . $title . '</strong>';
+        }
+        // parts
+        $data['parts'] = @$data['parts'] ?? @$data['order']['parts'];
+        $cells['Order'] = $order ?? implode(', ', $data['parts']);
+        $hat = @in_array('hat', $data['parts']);
+        $hood = @in_array('hood', $data['parts']);
+        $robe = @in_array('robe', $data['parts']);
+        // sizing
+        if ($robe) {
+            $cells['Gender'] = $data['size']['gender'];
+            $cells['Height'] = $data['size']['height']['ft'] . '\'' . $data['size']['height']['in'] . '"';
+            $cells['Weight'] = $data['size']['weight'];
+        }
+        if ($hat) {
+            if ($hatType == 'cap') {
+                $cells['Hat size'] = 'ELASTIC';
+            } else {
+                $cells['Hat size'] = $data['size']['hat'];
+            }
+        }
+        return implode('; ', $cells);
+    }
+
     public function orderTable($orders)
     {
         $out = '<table class="regalia-order-table">';
