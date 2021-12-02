@@ -2,6 +2,8 @@
 
 use Digraph\Modules\ous_event_regalia\RegaliaOrder;
 use Digraph\Modules\ous_event_regalia\Signup;
+use Digraph\Templates\NotificationsHelper;
+use Formward\Fields\Select;
 
 $package->cache_noStore();
 $group = $package->noun();
@@ -42,18 +44,70 @@ $needRegalia = array_filter(
 );
 
 // list everyone who needs an extra
+echo "<h2>Needs extra assigned</h2>";
 /** @var \Digraph\Modules\ous_event_regalia\RegaliaHelper */
 $regalia = $cms->helper('regalia');
 foreach ($needRegalia as $s) {
-    echo "<iframe class='embedded-iframe' src='" . $group->url('assign-extras-chunk', ['s' => $s['dso.id']]) . "'></iframe>";
+    printChunk($s, $cms, $package);
 }
 
 // list everyone who already has an extra assigned
+echo "<h2>Has extra assigned</h2>";
 $extras = $group->extraOrders();
 $extras = array_filter($extras, function (RegaliaOrder $order) {
     return $order->signup();
 });
 $options = [];
 foreach ($extras as $extra) {
-    echo "<iframe class='embedded-iframe' src='" . $group->url('assign-extras-chunk', ['s' => $extra->signup()['dso.id']]) . "'></iframe>";
+    printChunk($extra->signup(), $cms, $package);
+}
+
+function printChunk(Signup $signup, $cms, $package)
+{
+    /** @var Digraph\Modules\ous_event_regalia\RegaliaHelper */
+    $helper = $cms->helper('regalia');
+    echo "<div class='digraph-card'>";
+    echo "<p><strong><a href='" . $signup->url() . "' target='_blank'>" . $signup->name() . "</a></strong>";
+    echo '<br>order: ' . $helper->orderSizeString($signup);
+    if ($signup->regaliaOrder()) {
+        echo "<br>extra: " . $helper->orderSizeString($signup->regaliaOrder());
+    }
+    echo '</p>';
+
+    $form = $cms->helper('forms')->form('', $signup['dso.id']);
+    $form->addClass('autosubmit');
+    $form['extra'] = new Select('');
+    $form['extra']->required(true);
+    // get all available extras
+    $extras = $package->noun()->extraOrders();
+    $extras = array_filter($extras, function (RegaliaOrder $order) {
+        return !$order->signup();
+    });
+    $options = [];
+    $prev = null;
+    foreach ($extras as $extra) {
+        $name = $helper->orderSizeString($extra);
+        if ($name != $prev) {
+            $options[md5($name)] = $name;
+            $prev = $name;
+        }
+    }
+    $form['extra']->options($options);
+    $form['extra']->addTip('Generally you should choose the largest size available that is <em>smaller</em> than the requested size. Height is the primary concern for robe sizing.');
+    $form->action($package->url());
+    echo $form;
+    if ($form->handle()) {
+        // try to find an extra with a hash equal to the form value
+        foreach ($extras as $extra) {
+            $name = $helper->orderSizeString($extra);
+            if (md5($name) == $form['extra']->value()) {
+                $signup->regaliaOrder($extra);
+                $package->redirect($package->url());
+                return;
+            }
+        }
+        // no extra found
+        $cms->helper('notifications')->error('No matching extra found. It may have already been assigned.');
+    }
+    echo "</div>";
 }

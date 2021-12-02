@@ -52,10 +52,6 @@
         "allow group editor",
         "allow group bookstore"
       ],
-      "regalia-order-group/assign-extras-chunk": [
-        "allow group editor",
-        "allow group bookstore"
-      ],
       "regalia-order-group/billing": [
         "allow group editor",
         "allow group bookstore"
