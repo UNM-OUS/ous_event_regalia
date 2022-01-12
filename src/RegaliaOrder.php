@@ -58,6 +58,9 @@ class RegaliaOrder extends Noun
             // variables to store billing found for primary/secondary events
             $billing_primary = [];
             $billing_secondary = [];
+            $attended_primary = null;
+            $rsvped_secondary = false;
+            $rsvped_primary = false;
             foreach ($this->signup()->allEvents() as $event) {
                 if ($event::PRIMARY_EVENT) {
                     // if we find a primary event, convention is to bill only to that event
@@ -65,18 +68,25 @@ class RegaliaOrder extends Noun
                     if ($attended) {
                         // assign to this primary event if they attended, OR if there is no attendance helper
                         $billing_primary[$event['dso.id']] = 1;
-                    } elseif ($attended === null) {
-                        $this->cms()->helper('notifications')->warning(
-                            $this->orderGroup()->link() . ': No attendance information for ' . $event->link() . '/' . $this->signup()->link() . '. This order group\'s billing may change.',
-                            'no-attendance-' . $this['dso.id'] . '-' . $event['dso.id'] . '-' . $this->signup()['dso.id']
-                        );
+                        $attended_primary = true;
+                    } elseif ($attended === false) {
+                        // set attended primary to false if it's not already true
+                        $attended_primary = $attended_primary ? true : false;
                     }
+                    $rsvped_primary = true;
                 } else {
                     // otherwise add event to billing
                     $billing_secondary[$event['dso.id']] = 1;
+                    $rsvped_secondary = true;
                 }
             }
-            return $billing_primary ? $billing_primary : $billing_secondary;
+            if ($rsvped_primary && $rsvped_secondary && $attended_primary === null) {
+                $this->cms()->helper('notifications')->warning(
+                    'No primary event attendance information for ' . $this->signup()->link() . '.',
+                    'no-attendance-' . $this['dso.id'] . '-' . $this->signup()['dso.id']
+                );
+            }
+            return $billing_primary ? null : $billing_secondary;
         }
         // no information, convention is to bill to site owner
         return null;
