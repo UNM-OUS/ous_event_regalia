@@ -16,7 +16,7 @@ class RegaliaOrder extends Noun
     {
         $id = str_split($this['dso.id']);
         $ids = array_filter(
-            $this->orderGroup()->allOrderIDs(),
+            $this->orderGroup() ? $this->orderGroup()->allOrderIDs() : [],
             function ($e) {
                 return $e != $this['dso.id'];
             }
@@ -24,7 +24,7 @@ class RegaliaOrder extends Noun
         $number = array_shift($id);
         do {
             $number .= array_shift($id);
-        } while ($this->number_unique($number, $ids));
+        } while ($id && !$this->number_unique($number, $ids));
         return $number;
     }
 
@@ -32,7 +32,7 @@ class RegaliaOrder extends Noun
     {
         $strlen = strlen($number);
         foreach ($ids as $id) {
-            if (substr($id, 0, $strlen)) {
+            if (substr($id, 0, $strlen) == $number) {
                 return false;
             }
         }
