@@ -66,7 +66,7 @@ class RegaliaOrder extends Noun
                     // if we find a primary event, convention is to bill only to that event
                     $attended = $this->signup()->attended($event['dso.id']);
                     if ($attended) {
-                        // assign to this primary event if they attended, OR if there is no attendance helper
+                        // assign to this primary event if they attended, OR if there is no attendance helper]
                         $billing_primary[$event['dso.id']] = 1;
                         $attended_primary = true;
                     } elseif ($attended === false) {
@@ -76,7 +76,7 @@ class RegaliaOrder extends Noun
                     $rsvped_primary = true;
                 } else {
                     // otherwise add event to billing
-                    $billing_secondary[$event['dso.id']] = 1;
+                    $billing_secondary[$event->organization()['dso.id']] = 1;
                     $rsvped_secondary = true;
                 }
             }
